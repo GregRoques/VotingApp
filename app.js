@@ -5,9 +5,9 @@ const helmet = require('helmet');
 app.use(helmet());
 
 // reminder...middleware is anything that has access to rec and res
-app.get('/',(req,res,next)=>{
-    res.send("sanity check");
-})
+// app.get('/',(req,res,next)=>{
+//     res.send("sanity check");
+// })
 
 const mysql = require('mysql');
 const config = require('./config');
@@ -20,7 +20,10 @@ app.set('view engine','ejs');
 app.use(express.static('public'));
 
 app.get('/',(req,res,next)=>{
-    res.render('index',{});
+    const animalQuery = `select * from animals`
+    connection.query(animalQuery, (error, results)=>{
+        res.render('index',{animals:results});
+    });
 })
 
 console.log('app is listening on port 8282');
