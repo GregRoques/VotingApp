@@ -1,0 +1,12 @@
+img{
+    height:300px;
+}
+
+@font-face{
+    font-family: 'handwriting';
+    src: url('/public/LH.ttf')
+}
+
+h3{
+    font-family: 'handwriting';
+}

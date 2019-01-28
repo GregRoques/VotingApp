@@ -22,8 +22,22 @@ app.use(express.static('public'));
 app.get('/',(req,res,next)=>{
     const animalQuery = `select * from animals`
     connection.query(animalQuery, (error, results)=>{
-        res.render('index',{animals:results});
+        if(error){throw error}
+        const rand = Math.floor(Math.random()*results.length)
+        res.render('index',{animals:results[rand]});
     });
+})
+
+app.get('/vote/:value/:id',(req,res)=>{
+    const value = req.params.value;
+    const id = req.params.id;
+    const insertQuery = `INSERT INTO votes(id, aid, value)
+    VALUES
+    (DEFAULT, ?, ?)`
+    connection.query(insertQuery,[id,value],(error,results)=>{
+        if (error){throw error;}
+        res.redirect('/');
+    })
 })
 
 console.log('app is listening on port 8282');
