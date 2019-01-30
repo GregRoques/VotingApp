@@ -9,6 +9,8 @@ const bcrypt = require('bcrypt-nodejs');
 const expressSession = require('express-session');
 const helmet = require('helmet');
 const config = require('./config');
+const multer = require('multer');
+const upload = multer({dest: 'public/'});
 // app.use means, add some middleware!
 // middelware = any function that has access to req and res
 app.use(helmet());
@@ -237,6 +239,38 @@ app.post('/loginProcess',(req, res, next)=>{
         }
     })
 });
+
+app.get('/upload', (req,res)=>{
+    res.render('upload',{});
+})
+
+// app.post('/formSubmit',(req,res,next)=>{
+//     upload;
+//     next();
+// })
+
+app.post('/formSubmit',upload.single('imageToUpload'),(req,res)=>{
+    const tmpPath = req.file.path;
+    const targetPath = `public/${req.file.originalname}`
+
+    fs.readFile(tempPath,(error,fileContents)=>{
+        if (error){throw error};
+        fs.writeFile(targetPath,fileContents,(error2)=>{
+            if(error2){throw error2};
+            const insertQuery = `INSERT INTO animals (id,species,image)
+            VALUES
+            (DEFAULT,?,?);`
+            connection.query(insertQuery,[req.body.animalName,req.file.originalname],(dbError,dbResults)=>{
+                if(dbError){
+                    throw dbError;
+                }else{
+                    fs.unlink(tmpPath);
+                    res.redirect('/');
+                }
+            })
+        })
+    })
+})
 
 app.get('/logout',(req, res, next)=>{
     // delete all session varibles for this user
